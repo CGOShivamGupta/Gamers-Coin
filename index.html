@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gamer's Coin 🎮 - By Shivam Gupta</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(to right, #1e3c72, #2a5298);
+      font-family: 'Arial', sans-serif;
+      color: white;
+      text-align: center;
+    }
+
+    header {
+      padding: 20px;
+      background-color: #222;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      font-size: 28px;
+      color: #f39c12;
+    }
+
+    header .menu-icon {
+      font-size: 30px;
+      cursor: pointer;
+    }
+
+    header .menu {
+      display: none;
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      background-color: #333;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    header .menu a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 10px;
+      border-bottom: 1px solid #444;
+    }
+
+    header .menu a:hover {
+      background-color: #555;
+    }
+
+    main {
+      margin-top: 50px;
+      padding: 20px;
+    }
+
+    #coin-button {
+      background-color: #f39c12;
+      color: white;
+      padding: 20px 40px;
+      font-size: 24px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      outline: none;
+      position: relative;
+      transition: transform 0.1s ease;
+    }
+
+    #coin-button:active {
+      transform: scale(0.95);
+    }
+
+    #coin-button:focus {
+      outline: none;
+    }
+
+    .coin-animation {
+      position: absolute;
+      color: #e74c3c;
+      font-size: 20px;
+      animation: float-up 1s forwards;
+    }
+
+    @keyframes float-up {
+      0% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+    }
+
+    .stats {
+      margin: 20px 0;
+    }
+
+    .purchase-section {
+      margin: 40px 0;
+    }
+
+    .purchase-section h2 {
+      margin-bottom: 20px;
+    }
+
+    .purchase-item {
+      background-color: #34495e;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .purchase-item img {
+      width: 50px;
+      height: 50px;
+      border-radius: 5px;
+      margin-right: 15px;
+    }
+
+    .purchase-item span {
+      font-weight: bold;
+    }
+
+    #purchased-items {
+      display: none;
+    }
+
+    #purchased-items h2 {
+      margin-bottom: 20px;
+    }
+
+    #purchased-items .item {
+      background-color: #16a085;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Gamer's Coin 🎮</h1>
+    <span class="menu-icon" onclick="toggleMenu()">☰</span>
+    <div class="menu">
+      <a href="#" onclick="showPurchasedItems()">Purchased Items</a>
+      <a href="https://youtube.com/@chocogamerofficial?si=IDbHHKi2USaEvkk8?sub_confirmation=1" target="_blank">My YouTube Channel</a>
+    </div>
+  </header>
+
+  <main>
+    <button id="coin-button" onclick="increaseCoin()">Click to Earn 🎮</button>
+    <div class="stats">
+      <p>Total Coins: <span id="total-coins">0</span></p>
+      <p>Today's Coins: <span id="today-coins">0</span></p>
+    </div>
+
+    <div class="purchase-section">
+      <h2>Buy Gaming Equipment</h2>
+      <div id="purchase-list"></div>
+    </div>
+
+    <div id="purchased-items">
+      <h2>Purchased Items</h2>
+      <div id="purchased-list"></div>
+    </div>
+  </main>
+
+  <script>
+    let totalCoins = localStorage.getItem('totalCoins') ? parseInt(localStorage.getItem('totalCoins')) : 0;
+    let todayCoins = localStorage.getItem('todayCoins') ? parseInt(localStorage.getItem('todayCoins')) : 0;
+    const purchaseItems = [
+      { name: 'Gaming Mouse', price: 100, img: 'https://via.placeholder.com/50x50?text=Mouse' },
+      { name: 'Gaming Keyboard', price: 500, img: 'https://via.placeholder.com/50x50?text=Keyboard' },
+      { name: 'Gaming Headset', price: 1000, img: 'https://via.placeholder.com/50x50?text=Headset' },
+      { name: 'Gaming Chair', price: 2000, img: 'https://via.placeholder.com/50x50?text=Chair' },
+      { name: 'Gaming PC', price: 5000, img: 'https://via.placeholder.com/50x50?text=PC' }
+    ];
+    const purchasedItems = JSON.parse(localStorage.getItem('purchasedItems')) || [];
+
+    document.getElementById('total-coins').textContent = totalCoins;
+    document.getElementById('today-coins').textContent = todayCoins;
+
+    function increaseCoin() {
+      totalCoins++;
+      todayCoins++;
+      localStorage.setItem('totalCoins', totalCoins);
+      localStorage.setItem('todayCoins', todayCoins);
+
+      document.getElementById('total-coins').textContent = totalCoins;
+      document.getElementById('today-coins').textContent = todayCoins;
+
+      // Animation for +1 coin
+      const coinButton = document.getElementById('coin-button');
+      const coinAnimation = document.createElement('div');
+      coinAnimation.className = 'coin-animation';
+      coinAnimation.textContent = '+1';
+      coinButton.appendChild(coinAnimation);
+      setTimeout(() => {
+        coinButton.removeChild(coinAnimation);
+      }, 1000);
+    }
+
+    function renderPurchaseItems() {
+      const purchaseList = document.getElementById('purchase-list');
+      purchaseList.innerHTML = '';
+
+      purchaseItems.forEach((item, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'purchase-item';
+        itemDiv.innerHTML = `<img src="${item.img}" alt="${item.name}"><span>${item.name}</span> - ${item.price} 🎮 <button onclick="buyItem(${index})">Buy</button>`;
+        purchaseList.appendChild(itemDiv);
+      });
+    }
+
+    function buyItem(index) {
+      const item = purchaseItems[index];
+      if (totalCoins >= item.price) {
+        totalCoins -= item.price;
+        purchasedItems.push(item);
+        localStorage.setItem('totalCoins', totalCoins);
+        localStorage.setItem('purchasedItems', JSON.stringify(purchasedItems));
+        document.getElementById('total-coins').textContent = totalCoins;
+        alert(`You bought a ${item.name}!`);
+      } else {
+        alert("Not enough coins!");
+      }
+    }
+
+    function showPurchasedItems() {
+      const purchasedList = document.getElementById('purchased-list');
+      purchasedList.innerHTML = '';
+
+      if (purchasedItems.length > 0) {
+        purchasedItems.forEach(item => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'item';
+          itemDiv.innerHTML = `<img src="${item.img}" alt="${item.name}"> <span>${item.name}</span>`;
+          purchasedList.appendChild(itemDiv);
+        });
+      } else {
+        purchasedList.textContent = "You haven't purchased any items yet.";
+      }
+
+      document.getElementById('purchased-items').style.display = 'block';
+    }
+
+    function toggleMenu() {
+      const menu = document.querySelector('.menu');
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    window.onload = () => {
+      renderPurchaseItems();
+    };
+  </script>
+
+</body>
+  </html>
